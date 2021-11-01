@@ -147,7 +147,8 @@ function checkInFile () {
             echo "No such file exists."
             checkInFile
         else
-            echo "FCHKIN " $fileName, "File checked in by:" $(whoami), $(date +"%Y-%m-%d_%H-%M-%S") "NNNN \t Changes: NNNN" $(singleLinify "$(diff $fileName $dirName/$fileName)") "NNNN CARRIAGERETURN" >> $dirName/Logs/repo.log
+            read -p "Add a message describing your changes" message
+            echo "FCHKIN " $fileName, "File checked in by:" $(whoami), $(date +"%Y-%m-%d_%H-%M-%S") "message: $message" "NNNN \t Changes: NNNN" $(singleLinify "$(diff $fileName $dirName/$fileName)") "NNNN CARRIAGERETURN" >> $dirName/Logs/repo.log
             echo "Checking in " $fileName
             if [ ! -d $dirName/backup/$fileName ]; then
                 mkdir -p $dirName/backup/$fileName
@@ -277,7 +278,7 @@ function otherTools () {
         echo "This repository doesn't exist, please re-enter a correct name"
         otherTools
     fi
-    
+
 function mybackup {
 	local backupdir=".backup/$(date +%F)"
 	mkdir  -p $backupdir
