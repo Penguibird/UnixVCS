@@ -1,0 +1,32 @@
+#!/bin/bash
+
+
+mybackup () {
+     read -p 'enter file to checkout: ' backupdir
+    local backupdir=".backup/$(date +%F)"
+    mkdir -p $backupdir
+
+    local action=true
+      #if [ -e "$backupdir" ]; then
+    for $item in "$@" ; do
+        if [$action = true]; then 
+        action=false 
+        continue 
+        fi 
+        cp $item $backupdir
+        done
+ ### if file does not exist ###
+    #else 
+        #echo "invalid file"
+}
+
+action=$1
+
+case $action in
+    backup)
+        mybackup $@
+        ;;
+    *)
+        echo "unkown "
+        ;;
+esac

@@ -1,0 +1,60 @@
+#!/bin/bash
+  checkOutFile () {
+        echo "What is the name of the directory you wish to add a file to: "
+        read dirName
+     if [ -d "$dirName" ]; then
+          ### Take action if $dirName exists ###
+          echo "Enter the name of the file you wanna create: "
+          read fileName
+          touch $dirName/$fileName.txt
+          echo $fileName, "accessed by:" $(whoami), $(date +"%Y-%m-%d_%H-%M-%S") >> $dirName/Logs/repo.log
+     else
+          ### Else if it doesn't ###
+          echo "This repository doesn't exist, please re-enter a correct name"
+          addFile
+     fi
+}
+
+
+ checkOutFile () {
+        read -p 'enter file to checkout: ' fileCopy
+        local fileCopy=".backup/$(date +%F)"
+        touch -p $fileCopy
+
+        local action=true
+    if [ -e "$fileCopy" ]; then
+    for $item in "$@" ; do
+        if [$action = true]; then 
+        action=false 
+        continue 
+    fi 
+        cp $item $fileCopy
+    done
+ ### if file does not exist ###
+    else 
+        echo "invalid file"
+}
+
+archive () {
+    # echo "Enter file name  "
+        read -p 'Enter file name' fileName
+     if [ -e "fileName" ]; then
+        tar -cvf fileArchive.tar $fileName
+    
+    else 
+        echo "invalid file"
+
+
+     read 
+}
+
+editFile () {
+        read -p 'Enter file name to append' fileName
+    if [ -e "fileName" ]; then
+        nano $fileName
+
+    else 
+        echo "invalid file"
+
+
+}
