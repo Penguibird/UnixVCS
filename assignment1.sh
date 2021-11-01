@@ -11,6 +11,7 @@ function menu (){
     echo "6: Archive"
     echo "7: Read all logs"
     echo "8: Get the logs for a specific file"
+    echo "9: Use external tools in the repository"
     
     read input
     case $input in
@@ -31,6 +32,8 @@ function menu (){
         "7") printLog
         ;;
         "8") filterLog
+        ;;
+        "9") otherTools
         ;;
         *) echo "Unrecognized command"
         menu ;;
@@ -235,11 +238,44 @@ function archive () {
         echo "Input the archive name without suffix"
         read archiveName
         tar -czvxf $archiveName".tar.gz" $dirName
-     #    https://www.howtogeek.com/248780/how-to-compress-and-extract-files-using-the-tar-command-on-linux/
+        #    https://www.howtogeek.com/248780/how-to-compress-and-extract-files-using-the-tar-command-on-linux/
     else
         ### Else if it doesn't ###
         echo "This repository doesn't exist, please re-enter a correct name"
         archive
+    fi
+}
+
+function otherTools () {
+    echo "Select working repository"
+    read dirName
+    if [ -d "$dirName" ]; then
+        PS3="Run one of the following external tools "
+        select option in "Compile using Make" "ServeHTTP"
+        do
+            case $option in
+                "ServeHTTP")
+                    # https://unix.stackexchange.com/questions/32182/simple-command-line-http-server
+                    if [ -f $dirName/index.html ]; then
+                        while true ; do nc -l 80 <$dirName/index.html ; done
+                    else
+                        echo "No index.html found in the repository"
+                    fi
+                    break
+                ;;
+                "Compile using Make")
+                    cd $dirName
+                    make
+                    break
+                ;;
+                *) echo "Unrecognized command"
+                menu ;;
+            esac
+        done
+    else
+        ### Else if it doesn't ###
+        echo "This repository doesn't exist, please re-enter a correct name"
+        otherTools
     fi
 }
 
