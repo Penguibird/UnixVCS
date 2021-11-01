@@ -12,8 +12,7 @@ function menu (){
     echo "7: Read all logs"
     echo "8: Get the logs for a specific file"
     echo "9: Use external tools in the repository"
-    echo "10: Edit an already existing file"
-    echo "11: Backup the repo" 
+    echo "10: Edit a file directily in the repository"
     
     read input
     case $input in
@@ -38,8 +37,6 @@ function menu (){
         "9") otherTools
         ;;
         "10") editFile
-        ;;
-        "11") mybackup
         ;;
         *) echo "Unrecognized command"
         menu ;;
@@ -244,7 +241,7 @@ function archive () {
     if [ -d "$dirName" ]; then
         echo "Input the archive name without suffix"
         read archiveName
-        tar -czvxf $archiveName".tar.gz" $dirName
+        tar -czvf "$archiveName.tar.gz" $dirName
         #    https://www.howtogeek.com/248780/how-to-compress-and-extract-files-using-the-tar-command-on-linux/
     else
         ### Else if it doesn't ###
@@ -284,40 +281,29 @@ function otherTools () {
         echo "This repository doesn't exist, please re-enter a correct name"
         otherTools
     fi
-
-function mybackup {
-	local backupdir=".backup/$(date +%F)"
-	mkdir  -p $backupdir
-
-	local action=true 
-	for item in "$@" ; do 
-		if [ $action = true ]; then 
-			action=false
-			continue
-		fi
-		cp $item $backupdir 
-	done
 }
 
-# action=$1
-# case $action in
-# 	backup)
-# 		mybackup $@
-# 		;;
-# 	*)
-# 		echo "Unkown action"
-# 		;;
-# esac
+# function mybackup () {
+#     local backupdir=".backup/$(date +%F)"
+#     mkdir  -p $backupdir
+    
+#     local action=true
+#     for item in "$@" ; do
+#         if [ $action = true ]; then
+#             action=false
+#             continue
+#         fi
+#         cp $item $backupdir
+#     done
+# }
 
-function editFile {
-        read -p 'Enter file name to append' fileName
-    if [ -e "fileName" ]; then
+function editFile () {
+    read -p 'Enter file name to append' fileName
+    if [ -e "$fileName" ]; then
         nano $fileName
-
-    else 
+    else
         echo "invalid file"
-
-
+    fi
 }
 
 menu
