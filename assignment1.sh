@@ -146,7 +146,7 @@ function checkInFile () {
             if [ ! -d $dirName/backup/$fileName ]; then
                 mkdir -p $dirName/backup/$fileName
             fi
-            mv $dirName/$fileName $dirName/backup/$fileName/$fileName_old_$(date +"%Y-%m-%d_%H-%M-%S")
+            mv $dirName/$fileName $dirName/backup/$fileName/$fileName"_old_$(date +"%Y-%m-%d_%H-%M-%S")"
             mv $fileName $dirName/$fileName
         fi
         menu
@@ -181,17 +181,21 @@ function restore () {
     read dirName
     if [ -d "$dirName" ]; then
         PS3="Choose which file you want to restore "
-        select fileName in $(ls $dirName/backup )
+        local fileName=NULL
+        select f in $(ls $dirName/backup )
         do
-            PS3="Choose which version of the file you want to restore "
-            select specificFileName in $(ls $dirName/backup/$fileName )
-            do
-                mv $dirName/$fileName $dirName/backup/$fileName/$fileName_old_$(date +"%Y-%m-%d_%H-%M-%S")
-                mv $dirName/backup/$fileName/$specificFileName $dirName/$fileName
-            done
+            fileName=$f
+            break
         done
-        echo "FILRST" $specificFileName, "File restored by:" $(whoami), $(date +"%Y-%m-%d_%H-%M-%S") >> $dirName/Logs/repo.log
-        echo "File $fileName restored. Ready to be checked out."
+        PS3="Choose which version of the file you want to restore "
+        select specificFileName in $(ls $dirName/backup/$fileName )
+        do
+            mv $dirName/$fileName $dirName/backup/$fileName/$fileName"_old_$(date +"%Y-%m-%d_%H-%M-%S")"
+            mv $dirName/backup/$fileName/$specificFileName $dirName/$fileName
+            echo "FILRST" $specificFileName, "File restored by:" $(whoami), $(date +"%Y-%m-%d_%H-%M-%S") >> $dirName/Logs/repo.log
+            echo "File $fileName restored. Ready to be checked out."
+            break
+        done
         menu
     else
         ### Else if it doesn't ###
