@@ -8,7 +8,7 @@ function menu (){
     echo "3: Check out a file"
     echo "4: Check in a file"
     echo "5: Restore a file"
-    echo "5: Archive"
+    echo "6: Archive"
     echo "6: Read all logs"
     
     read input
@@ -23,9 +23,11 @@ function menu (){
         ;;
         "4") checkInFile
         ;;
-        "5") archive
+        "5") restore
         ;;
-        "6") printLog
+        "6") archive
+        ;;
+        "7") printLog
         ;;
         *) echo "Unrecognized command"
         menu ;;
@@ -98,7 +100,7 @@ function checkOutFile () {
     read dirName
     if [ -d "$dirName" ]; then
         ### Take action if $dirName exists ###
-        echo "The current file in your directory will be overwritten."
+        echo "CAUTION! The current file with the same name in your directory will be overwritten."
         PS3="Choose which file you want to checkout "
         select fileName in $(ls -p $dirName | grep -v /)
         do
@@ -157,6 +159,7 @@ function printLog () {
         ### Take action if $dirName exists ###
         # echo "$(multiLinify "$(<$dirName/Logs/repo.log)")"
         echo "Logs for the repo" $dirName
+        echo "LGPRNT" "printed by:" $(whoami), $(date +"%Y-%m-%d_%H-%M-%S") >> $dirName/Logs/repo.log
         multiLinify "$(<$dirName/Logs/repo.log)"
         menu
     else
@@ -166,5 +169,28 @@ function printLog () {
     fi
 }
 
+function restore () {
+    echo "Select working repository"
+    read dirName
+    if [ -d "$dirName" ]; then
+        PS3="Choose which file you want to restore "
+        select fileName in $(ls $dirName/backup )
+        do
+            PS3="Choose which version of the file you want to restore "
+            select specificFileName in $(ls $dirName/backup/$fileName )
+            do
+                mv $dirName/$fileName $dirName/backup/$fileName/$fileName_old_$(date +"%Y-%m-%d_%H-%M-%S")
+                mv $dirName/backup/$fileName/$specificFileName $dirName/$fileName
+            done
+        done
+        echo "FILRST" $specificFileName, "restored by:" $(whoami), $(date +"%Y-%m-%d_%H-%M-%S") >> $dirName/Logs/repo.log
+        echo "File $fileName restored. Ready to be checked out."
+        menu
+    else
+        ### Else if it doesn't ###
+        echo "This repository doesn't exist, please re-enter a correct name"
+        restore
+    fi
+}
 
 menu
