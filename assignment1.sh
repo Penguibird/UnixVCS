@@ -169,11 +169,11 @@ function filterLog () {
         # echo "$(multiLinify "$(<$dirName/Logs/repo.log)")"
         echo "Look for all the logs for a specific file. Input the filename"
         read fileName
-
+        
         echo "Logs for the repo" $dirName "regarding the file" $fileName
         echo "LGPRNT" "Logs printed by:" $(whoami), $(date +"%Y-%m-%d_%H-%M-%S") "NNNN" >> $dirName/Logs/repo.log
-     #    echo "$(grep '[A-Z]\\{6,8\\}'$fileName $dirName/Logs/repo.log)"
-     #    echo "$(echo '[A-Z]\\{6,8\\} $fileName' $dirName/Logs/repo.log)"
+        #    echo "$(grep '[A-Z]\\{6,8\\}'$fileName $dirName/Logs/repo.log)"
+        #    echo "$(echo '[A-Z]\\{6,8\\} $fileName' $dirName/Logs/repo.log)"
         multiLinify "$(grep "[A-Z]\\{6,8\\} $fileName" $dirName/Logs/repo.log)"
         menu
     else
@@ -225,6 +225,21 @@ function restore () {
         ### Else if it doesn't ###
         echo "This repository doesn't exist, please re-enter a correct name"
         restore
+    fi
+}
+
+function archive () {
+    echo "Select working repository"
+    read dirName
+    if [ -d "$dirName" ]; then
+        echo "Input the archive name without suffix"
+        read archiveName
+        tar -czvxf $archiveName".tar.gz" $dirName
+     #    https://www.howtogeek.com/248780/how-to-compress-and-extract-files-using-the-tar-command-on-linux/
+    else
+        ### Else if it doesn't ###
+        echo "This repository doesn't exist, please re-enter a correct name"
+        archive
     fi
 }
 
