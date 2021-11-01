@@ -83,8 +83,9 @@ function addFile () {
                 addFile
             fi
         else
-            touch $dirName/$fileName
             echo "FILEADD" $fileName, "added by:" $(whoami), $(date +"%Y-%m-%d_%H-%M-%S") "Changes: NNNN" $(singleLinify "$(<$fileName)" ) >> $dirName/Logs/repo.log
+            cp $fileName $dirName/$fileName
+            echo "Added file $fileName"
             menu
         fi
     else
