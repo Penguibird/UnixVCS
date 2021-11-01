@@ -12,6 +12,8 @@ function menu (){
     echo "7: Read all logs"
     echo "8: Get the logs for a specific file"
     echo "9: Use external tools in the repository"
+    echo "10: Edit an already existing file"
+    echo "11: Backup the repo" 
     
     read input
     case $input in
@@ -34,6 +36,10 @@ function menu (){
         "8") filterLog
         ;;
         "9") otherTools
+        ;;
+        "10") editFile
+        ;;
+        "11") mybackup
         ;;
         *) echo "Unrecognized command"
         menu ;;
@@ -303,7 +309,7 @@ function mybackup {
 # 		;;
 # esac
 
-editFile () {
+function editFile {
         read -p 'Enter file name to append' fileName
     if [ -e "fileName" ]; then
         nano $fileName
