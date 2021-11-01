@@ -10,6 +10,7 @@ function menu (){
     echo "5: Restore a file"
     echo "6: Archive"
     echo "7: Read all logs"
+    echo "8: Get the logs for a specific file"
     
     read input
     case $input in
@@ -28,6 +29,8 @@ function menu (){
         "6") archive
         ;;
         "7") printLog
+        ;;
+        "8") filterLog
         ;;
         *) echo "Unrecognized command"
         menu ;;
@@ -85,7 +88,7 @@ function addFile () {
                 addFile
             fi
         else
-            echo "FILEADD" $fileName, "added by:" $(whoami), $(date +"%Y-%m-%d_%H-%M-%S") "NNNN     Changes: NNNN" $(singleLinify "$(<$fileName)") "NNNN CARRIAGERETURN" >> $dirName/Logs/repo.log
+            echo "FILADD" $fileName, "added by:" $(whoami), $(date +"%Y-%m-%d_%H-%M-%S") "NNNN     Changes: NNNN" $(singleLinify "$(<$fileName)") "NNNN CARRIAGERETURN" >> $dirName/Logs/repo.log
             cp $fileName $dirName/$fileName
             echo "Added file $fileName"
             menu
@@ -158,6 +161,27 @@ function checkInFile () {
 }
 
 
+function filterLog () {
+    echo "Select which repository's logs you want to search"
+    read dirName
+    if [ -d "$dirName" ]; then
+        ### Take action if $dirName exists ###
+        # echo "$(multiLinify "$(<$dirName/Logs/repo.log)")"
+        echo "Look for all the logs for a specific file. Input the filename"
+        read fileName
+
+        echo "Logs for the repo" $dirName "regarding the file" $fileName
+        echo "LGPRNT" "Logs printed by:" $(whoami), $(date +"%Y-%m-%d_%H-%M-%S") "NNNN" >> $dirName/Logs/repo.log
+     #    echo "$(grep '[A-Z]\\{6,8\\}'$fileName $dirName/Logs/repo.log)"
+     #    echo "$(echo '[A-Z]\\{6,8\\} $fileName' $dirName/Logs/repo.log)"
+        multiLinify "$(grep "[A-Z]\\{6,8\\} $fileName" $dirName/Logs/repo.log)"
+        menu
+    else
+        ### Else if it doesn't ###
+        echo "This repository doesn't exist, please re-enter a correct name"
+        filterLog
+    fi
+}
 
 function printLog () {
     echo "Select which repository's logs you want to print"
@@ -172,7 +196,7 @@ function printLog () {
     else
         ### Else if it doesn't ###
         echo "This repository doesn't exist, please re-enter a correct name"
-        addFile
+        printLog
     fi
 }
 
